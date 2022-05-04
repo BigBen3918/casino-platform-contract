@@ -1,4 +1,3 @@
-
 const { ethers } = require("hardhat");
 
 /**
@@ -6,19 +5,19 @@ const { ethers } = require("hardhat");
  * @param {Number} delayTimes - timePeriod for delay
  */
 function delay(delayTimes) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(2);
-    }, delayTimes);
-  });
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(2);
+        }, delayTimes);
+    });
 }
 
 /**
- * change data type from Number to BigNum 
+ * change data type from Number to BigNum
  * @param {Number} value - data that need to be change
  * @param {Number} d - decimals
  */
-function toBigNum(value,d) {
+function toBigNum(value, d) {
     return ethers.utils.parseUnits(value, d);
 }
 
@@ -27,8 +26,8 @@ function toBigNum(value,d) {
  * @param {Number} value - data that need to be change
  * @param {Number} d - decimals
  */
-function fromBigNum(value,d) {
+function fromBigNum(value, d) {
     return ethers.utils.formatUnits(value, d);
 }
 
-module.exports = {delay, toBigNum, fromBigNum};
+module.exports = { delay, toBigNum, fromBigNum };

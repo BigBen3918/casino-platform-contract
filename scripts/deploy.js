@@ -19,7 +19,12 @@ async function main() {
     console.log(chainId, owner.address);
 
     const AtariToken = await ethers.getContractFactory("ERC20");
-    var atariToken = await AtariToken.deploy("ATARI", "ATRI", "0", "100000000000000");
+    var atariToken = await AtariToken.deploy(
+        "ICICB CASINO",
+        "C-ICICB",
+        "0",
+        "100000000000000"
+    );
     await atariToken.deployed();
 
     // var atariToken = {address : process.env.ATARIADDRESS};

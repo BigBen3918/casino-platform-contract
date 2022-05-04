@@ -62,7 +62,7 @@ contract StakingPool is Context, ERC20, Ownable{
         gameInfo.gameOwner = _gameInfo.gameOwner;
         gameInfo.feeRate = _gameInfo.feeRate;
         gameInfo.gameName = _gameInfo.gameName;
-        atariAddress = _atariAddress;        
+        atariAddress = _atariAddress;
     }
 
     function stake(uint256 amount) public returns (bool) {

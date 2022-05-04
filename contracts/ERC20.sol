@@ -165,7 +165,7 @@ contract ERC20 is Context{
 	mapping (address => mapping (address => uint256)) internal _allowances;
 
 	uint256 internal _totalSupply;
-	uint8 internal _decimals = 18;
+	uint8 internal _decimals = 0;
 	string internal _symbol;
 	string internal _name;
     
