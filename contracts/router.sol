@@ -7,20 +7,20 @@ import "./staking.sol";
 contract Treasury is Ownable {
     event Deposit(address from, uint256 amount);
 
-    address public atariAddress;
+    address public ICICBAddress;
 
-    constructor(address _atariAddress) public {
-        atariAddress = _atariAddress;
+    constructor(address _ICICBAddress) public {
+        ICICBAddress = _ICICBAddress;
     }
 
     function withdraw(address to, uint256 amount) external onlyOwner {
-        ERC20 AtariToken = ERC20(atariAddress);
-        AtariToken.transfer(to, amount);
+        ERC20 ICICBToken = ERC20(ICICBAddress);
+        ICICBToken.transfer(to, amount);
     }
 
     function deposit(uint256 amount) external {
-        ERC20 AtariToken = ERC20(atariAddress);
-        AtariToken.transferFrom(msg.sender, address(this), amount);
+        ERC20 ICICBToken = ERC20(ICICBAddress);
+        ICICBToken.transferFrom(msg.sender, address(this), amount);
         emit Deposit(msg.sender, amount);
     }
 }
@@ -34,21 +34,21 @@ contract StakingRouter is Ownable {
 
     address public admin;
     address public treasury;
-    address public atariAddress;
+    address public ICICBAddress;
 
     address[] public games;
     mapping(address => uint256) public gameIds;
 
-    constructor(address _admin, address _atariAddress) public {
+    constructor(address _admin, address _ICICBAddress) public {
         admin = _admin;
-        atariAddress = _atariAddress;
+        ICICBAddress = _ICICBAddress;
 
-        Treasury _treasury = new Treasury(atariAddress);
+        Treasury _treasury = new Treasury(ICICBAddress);
         treasury = address(_treasury);
     }
 
     function create(GameInfo memory _gameInfo) public {
-        StakingPool newGame = new StakingPool(_gameInfo, atariAddress);
+        StakingPool newGame = new StakingPool(_gameInfo, ICICBAddress);
 
         gameIds[address(newGame)] = games.length;
         games.push(address(newGame));

@@ -56,17 +56,17 @@ contract StakingPool is Context, ERC20, Ownable{
     using SafeMath for uint256;
 
     GameInfo public gameInfo;
-    address public atariAddress;
+    address public ICICBAddress;
 
-    constructor(GameInfo memory _gameInfo, address _atariAddress) ERC20(string(abi.encodePacked("sATARI", _gameInfo.gameName)), "sATRI" ,0 ,0) public {
+    constructor(GameInfo memory _gameInfo, address _ICICBAddress) ERC20(string(abi.encodePacked("sICICB", _gameInfo.gameName)), "sATRI" ,0 ,0) public {
         gameInfo.gameOwner = _gameInfo.gameOwner;
         gameInfo.feeRate = _gameInfo.feeRate;
         gameInfo.gameName = _gameInfo.gameName;
-        atariAddress = _atariAddress;
+        ICICBAddress = _ICICBAddress;
     }
 
     function stake(uint256 amount) public returns (bool) {
-        ERC20 AtariToken = ERC20(atariAddress);
+        ERC20 ICICBToken = ERC20(ICICBAddress);
         
         //fee count
         uint feeAmount = amount * gameInfo.feeRate/1000000;
@@ -74,37 +74,37 @@ contract StakingPool is Context, ERC20, Ownable{
         uint256 mintAmount = 0;
         
         if(_totalSupply == 0) mintAmount = amount.sub(feeAmount);
-        else mintAmount = (amount.sub(feeAmount)) * _totalSupply / AtariToken.balanceOf(address(this));
+        else mintAmount = (amount.sub(feeAmount)) * _totalSupply / ICICBToken.balanceOf(address(this));
 
-        AtariToken.transferFrom(msg.sender,address(this),amount);
-        AtariToken.transfer(owner(),feeAmount/2);
-        AtariToken.transfer(gameInfo.gameOwner,feeAmount/2);
+        ICICBToken.transferFrom(msg.sender,address(this),amount);
+        ICICBToken.transfer(owner(),feeAmount/2);
+        ICICBToken.transfer(gameInfo.gameOwner,feeAmount/2);
 
         _mint(_msgSender(), mintAmount);
         return true;
     }
     
     function unstake(uint256 amount) public returns (bool) {
-        ERC20 AtariToken = ERC20(atariAddress);
+        ERC20 ICICBToken = ERC20(ICICBAddress);
         
         uint256 withdrawAmount;
-        withdrawAmount = AtariToken.balanceOf(address(this)) * amount / _totalSupply;
-        AtariToken.transfer(msg.sender,withdrawAmount);
+        withdrawAmount = ICICBToken.balanceOf(address(this)) * amount / _totalSupply;
+        ICICBToken.transfer(msg.sender,withdrawAmount);
 
         _burn(_msgSender(), amount);
         return true;
     }
 
-    // atari/sATARI rate (1000000)
+    // ICICB/sICICB rate (1000000)
     function getRate() public view returns (uint256 rate) {
-        ERC20 AtariToken = ERC20(atariAddress);
-        rate = AtariToken.balanceOf(address(this))*1000000/_totalSupply;
+        ERC20 ICICBToken = ERC20(ICICBAddress);
+        rate = ICICBToken.balanceOf(address(this))*1000000/_totalSupply;
     }
     
     /* ------------- game Actions ------------- */
     function gameWithdraw(address to, uint amount) public onlyOwner{
-        ERC20 AtariToken = ERC20(atariAddress);
-        AtariToken.transfer(to,amount);
+        ERC20 ICICBToken = ERC20(ICICBAddress);
+        ICICBToken.transfer(to,amount);
     }
 
     /* ------------- view ------------- */

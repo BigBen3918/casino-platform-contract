@@ -8,7 +8,7 @@ const {delay, fromBigNum, toBigNum} = require("./utils.js")
 var owner;
 var userWallet;
 
-var atariToken;
+var ICICBToken;
 var stakingRouter;
 var treasury;
 var stakingPools = [];
@@ -29,15 +29,15 @@ describe("Create UserWallet", function () {
 
 describe("Staking factory deploy", function () {
     
-    it("atariToken deploy", async function () {
-        const AtariToken = await ethers.getContractFactory("ERC20");
-        atariToken = await AtariToken.deploy("ATARI","ATRI","0","100000000000000");
-        await atariToken.deployed();
+    it("ICICBToken deploy", async function () {
+        const ICICBToken = await ethers.getContractFactory("ERC20");
+        ICICBToken = await ICICBToken.deploy("ICICB","ATRI","0","100000000000000");
+        await ICICBToken.deployed();
     });
 
     it("Router deploy", async function () {
         const Router = await ethers.getContractFactory("StakingRouter");
-        stakingRouter = await Router.deploy(owner.address, atariToken.address);
+        stakingRouter = await Router.deploy(owner.address, ICICBToken.address);
         await stakingRouter.deployed();
         
         var treasuryAddress = await stakingRouter.treasury();
@@ -84,17 +84,17 @@ describe("pools test", function () {
     it("stake test", async function () {
         var stakingPool = stakingPools[0];
 
-        var tx = await  atariToken.approve(stakingPool.address,"10000000000000");
+        var tx = await  ICICBToken.approve(stakingPool.address,"10000000000000");
         await tx.wait();
 
-        var atariAddress = await stakingPool.atariAddress();
-        console.log(atariAddress);
+        var ICICBAddress = await stakingPool.ICICBAddress();
+        console.log(ICICBAddress);
         tx = await stakingPool.stake("1000000");
         await tx.wait();
 
         var stakingPoolAmount = await stakingPool.totalSupply();
-        var poolAmount = await atariToken.balanceOf(stakingPool.address);
-        var adminAmount = await atariToken.balanceOf(userWallet.address);
+        var poolAmount = await ICICBToken.balanceOf(stakingPool.address);
+        var adminAmount = await ICICBToken.balanceOf(userWallet.address);
 
         // 1000000 * 99% , 1000000 * 0.05%
         expect(stakingPoolAmount).to.equal(toBigNum("990000",0));
@@ -106,8 +106,8 @@ describe("pools test", function () {
         await tx.wait();
 
         var stakingPoolAmount = await stakingPool.totalSupply();
-        var poolAmount = await atariToken.balanceOf(stakingPool.address);
-        var adminAmount = await atariToken.balanceOf(userWallet.address);
+        var poolAmount = await ICICBToken.balanceOf(stakingPool.address);
+        var adminAmount = await ICICBToken.balanceOf(userWallet.address);
         // 2000000 * 99% , 2000000 * 0.05%
         expect(stakingPoolAmount).to.equal(toBigNum("1980000",0));
         expect(poolAmount).to.equal(toBigNum("1980000",0));
@@ -115,13 +115,13 @@ describe("pools test", function () {
     });
     
     it("deposit test", async function () {
-        var tx = await  atariToken.approve(treasury.address,"10000000000000");
+        var tx = await  ICICBToken.approve(treasury.address,"10000000000000");
         await tx.wait();
 
         tx = await treasury.deposit("1000000");
         await tx.wait();
 
-        var treasuryAmount = await atariToken.balanceOf(treasury.address);
+        var treasuryAmount = await ICICBToken.balanceOf(treasury.address);
 
         // 1000000 
         expect(treasuryAmount).to.equal(toBigNum("1000000",0));
@@ -140,7 +140,7 @@ describe("game test", function () {
         tx = await stakingRouter.gameLose(stakingPool,"400000");
         await tx.wait();
 
-        var poolAmount = await atariToken.balanceOf(stakingPool.address);
+        var poolAmount = await ICICBToken.balanceOf(stakingPool.address);
         
         //990000 + 100000
         expect(poolAmount).to.equal(toBigNum("1090000",0));
@@ -155,14 +155,14 @@ describe("withdraw test", function () {
         var stakingPool = stakingPools[0];
         
         var stakeAmount = await stakingPool.balanceOf(owner.address);
-        var poolAmount = await atariToken.balanceOf(stakingPool.address);
+        var poolAmount = await ICICBToken.balanceOf(stakingPool.address);
         
         console.log(fromBigNum(stakeAmount,0),fromBigNum(poolAmount,0));
 
         var tx = await stakingPool.unstake("500000");
         await tx.wait();
 
-        poolAmount = await atariToken.balanceOf(stakingPool.address);
+        poolAmount = await ICICBToken.balanceOf(stakingPool.address);
         
         //990000 + 100000
         expect(poolAmount).to.equal(toBigNum("545000",0));
@@ -170,14 +170,14 @@ describe("withdraw test", function () {
 
     it("player withdraw test", async function () {
         
-        var poolAmount = await atariToken.balanceOf(treasury.address);
+        var poolAmount = await ICICBToken.balanceOf(treasury.address);
         
         console.log(fromBigNum(poolAmount,0));
 
         var tx = await stakingRouter.withdraw(owner.address, "500000");
         await tx.wait();
 
-        poolAmount = await atariToken.balanceOf(treasury.address);
+        poolAmount = await ICICBToken.balanceOf(treasury.address);
         
         //990000 + 100000
         expect(poolAmount).to.equal(toBigNum("400000",0));
